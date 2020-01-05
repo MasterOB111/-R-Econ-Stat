@@ -1,0 +1,42 @@
+---
+title: "Assign5_Econ220"
+author: "D.Z."
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(knitr)
+```
+
+## the t-test. 
+
+Let's go back to our beloved college data. 
+
+1. use the function prop.table to do a table with the porportion of private vs public colleges, make another table with the proportion of college by region. 
+
+2. Calculate the mean of tuition and SAT by public and private university (remember the information about public and private is part of the variable control). Show these means using the package dplyr and the kable function. 
+2. Use the function t.test to test for: 
+2.a. Differences in the mean tuition between public and private colleges 
+2.b. Differences in the mean SAT between public and private colleges
+2.c Differences in the mean tuition between private colleges in the Northeast vs the west. (Hint: your data for the test is now data = subset(college, (  here the logical expression that restrict this to Private, Northeast and West))) )
+
+3. How can you interpret the results for 2a, b and c?
+
+```{r echo = TRUE, results='hold'}
+college <- read.csv("http://672258.youcanlearnit.net/college.csv")
+prop.table(table(college$control)) %>% round(3)
+prop.table(table(college$region)) %>% round(3)
+college %>% group_by(region, control) %>% summarize(avgTuition = mean(tuition), AvgSAT= mean(sat_avg)) %>% kable()
+college %>% group_by(control) %>% summarize(AvgTuition = mean(tuition), AvgSAT = mean(sat_avg)) %>% kable()
+attach(college)
+t.test(tuition~control, mu = 0, alt = "two.sided", conf = 0.95, var.eq = F, paired = F)
+t.test(sat_avg~control, mu = 0, alt = "two.sided", conf = 0.95, var.eq = F, paired = F)
+data <- subset(college, control == "Private" & (region == "Northeast" | region == "West"), select= c(tuition, region))
+detach(college)
+attach(data)
+t.test(tuition~region, mu = 0, alt = "two.sided", conf = 0.95, var.eq = F, paired = F)
+```
+
