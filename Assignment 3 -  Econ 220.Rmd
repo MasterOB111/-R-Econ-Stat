@@ -1,0 +1,55 @@
+---
+title: "Tables_Assignment"
+author: "D.Z."
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    theme: united
+---
+
+```{css, echo=F}
+th, td {
+    padding-left: 10px;
+    text-align: left;        
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(stargazer)
+```
+
+# In class assignment 
+
+Use this empty R markdown document to practice your skills to do nice tables in R. 
+
+1. Load the R built in dataset `swiss` that contains a standardized fertility measure and socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888.
+**Hint**: Remember to add the option results='asis' in every chunk of code that uses stargazer to make sure your results print nicely onto html.
+
+2. Create the basic summary table
+```{r}
+summary(swiss)
+```
+
+
+3. Use kable to make a nicer looking table 
+```{r}
+kable(summary(swiss), digits=2, caption="Swiss Data")
+```
+
+
+4. Use `stargazer` to make a `drop dead gorgeous` table with the summary statistics. Only showing only n, mean, and sd.
+```{r, results='asis'}
+stargazer(swiss, type = "html", digits = 1, summary.stat = c("n", "mean", "sd")) 
+```
+
+
+5. Make the same table as before but flip it and change the title.
+```{r, results= 'asis'}
+stargazer(swiss, type = "html", summary.stat = c("n", "mean", "sd"), flip = TRUE, title= "My beautiful table",
+          out = "Nice_table.html")
+```
+
+
+ 
