@@ -1,0 +1,116 @@
+---
+title: "Econ220 Final Project"
+author: "D.Z."
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+## Load the useful packages
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(stargazer)
+```
+
+## Introduction
+
+The reason I choose this data set is because this specific data set reflects various aspect of the sales of a large chain outdoor merchandise store. It includes data of various product lines, various locations of retails, and sales amount -- all in periodic sequence between 2014 to 2017. With the numerous aspects to be compared of, wer are able to yield various comparisons with this data set, which will directly lead to a comprehensive analysis to the sales performance of this company overtime. With the results of analysis, we are even able to predict the future of the sales if there are clear trends.
+
+My plan is to compare the sales trends between locations of retials, between product lines, and overall sales trend of the company. By comparing the sales trend between different locations of retails, we are able to find out the difference of sales between retial platforms and find out the most popular platform. By comparing the sales trend between product lines, we are able to demonstrate which product line is the most appreciated. By comparing the overall sales trend of the company, we are able to analyze the overall performance of it and predict the future sales.
+
+## Import the Data Set
+
+Here we import the required dataset to R.
+
+```{r echo = TRUE}
+## Import the dataset
+data_Sales <- (read_excel("OutDoorGearSales.xlsx", range = "A1:H75901"))
+```
+
+## Summarize the Data Set
+
+```{r echo = TRUE}
+## Gives a summary of the structure of the dataframe "data_Sales"
+str(data_Sales)
+## 75900 observations of 8 variables
+```
+
+## Analyze Sales by Location of Retials
+
+To analyze the sales by location of retials, group the data set by retials and compare the sales made by each locations in periodic timeline.
+
+```{r echo = TRUE}
+## This code create a new dataframe "lobation" that contains only useful columns from the original dataset, which are "Location", "Year", and "Sales"
+location <- data_Sales %>%
+  select(Location, Year, Sales) %>%
+  group_by(Location, Year) %>%
+  summarise(totalSales = sum(Sales))
+
+## Use kable function to create a table of sales of certain year, grouped by locations
+location %>%
+  kable() %>%
+  kable_styling()
+
+## Create a Line chart to analyze the trend of sales in 2014 - 2017 of different segments
+ggplot(data = location, mapping = aes(x = Year, y = totalSales, color = Location, group = interaction(Location))) + geom_point() + geom_line() + scale_x_continuous()
+```
+
+From the Graph we can clearly see that the Online sales segment has been growing the most rapidly during 2014 to 2017. Flagship sales segment achieved a decent increse in their sales as well, but not as significant as Online sales. The sales of Store A and Store B almost remained stagnant compared to that of Online and Flagship.
+
+## Analyze Sales by Product Lines
+
+To analyze the sales by production lines, group the data set by product lines and compare the sales made in each product lines in periodic timeline
+
+```{r echo = TRUE}
+## This code create a new dataframe "pl" that contains only useful columns from the original dataset, which are "ProductLine", "Year", and "Sales" 
+pl <- data_Sales %>%
+  select(ProductLine, Year, Sales) %>%
+  group_by(ProductLine, Year) %>%
+  summarise(totalSales = sum(Sales))
+
+## Use kable function to create a table of sales of certain year, grouped by "ProductLine"
+pl %>%
+  kable() %>%
+  kable_styling()
+
+## Create a Line chart to analyze the trend of sales in 2014 - 2017 of different "ProductLine"
+ggplot(data = pl, mapping = aes(x = Year, y = totalSales, color = ProductLine, group = interaction(ProductLine))) + geom_point() + geom_line() + scale_x_continuous()
+```
+
+The increment of sales of Personal accessaries achieved a significant boost started from 2015, and so does Golf Equipment, eventhought the increment was not as significant as that of Personal Accessories. The sales of camping equipment and that of Mountaineering Equipment, which was not introduced until 2015, also elevated throughout the time. The only downfall in sales is the Outdoor Protection, which kept decreasing from 2014 to 2017.
+
+## Analyze the Overall Performance of Sales
+
+To analyze the overall sales performance, group the data set by year and compare the sales made in each year and analyze the trend.
+
+```{r echo = TRUE}
+## This code create a new dataframe "year" that contains only useful columns from the original dataset, which are "Year", and "Sales" 
+year<- data_Sales %>%
+  select(Year, Sales) %>%
+  group_by(Year) %>%
+  summarise(totalSales = sum(Sales))
+
+## Use kable function to create a table of total sales of certain year
+year %>%
+  kable() %>%
+  kable_styling()
+
+## Create a box chart to analyze the amount of total sales in 2014 - 2017
+ggplot(data = year, aes(x = Year, y = totalSales, label = totalSales)) + 
+  geom_col(fill = "light blue") +
+  ylab("Sales") + xlab("Year") + 
+  ggtitle("Total Sales by Year")
+```
+
+## Conclusion
+
+Even with drawbacks from sales in Outdoor Protection segment, the overall sales performances has been improving from 2014 to 2017. The most significant attribute to this continuous growth in sales, in my opinion, is due to the bloom of online sales. Even though the overall sales in Flagship remianed the top contributor to the total sales of the company, it only increased by 32.1%, comparing to that of Online, which is 360.9%. By the end of the 2017, total sales of Online is already 73.5% as much as the total sales of Flagship. At this rate, it is possible for Online segment to surpass the Flagship segment and to become the #1 contributor to the total sales in this Company.
+
+## Source of Data Set
+
+This data set was offered by a friend of mine. The origin of this data set was offered as an Interview preparation material of a consulting firm.
