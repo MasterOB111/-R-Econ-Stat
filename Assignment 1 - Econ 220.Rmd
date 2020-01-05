@@ -1,0 +1,77 @@
+---
+title: "Assignment 1 Econ 220"
+author: "Dingyuan Zhang"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Download data into R
+Here is the code to download your data from excel
+
+```{r}
+library(readxl)
+data18 <- (read_excel("YourData_F2018.xlsx", range = "B7:F73"))
+```
+
+## Descriptive statistics of the data
+
+First make a summary of the data
+```{r}
+summary(data18)
+```
+
+Now let's look at statistics by gender
+```{r}
+data18 %>%
+  group_by(Gender) %>%
+  summarise(Height = mean(Height), Weight = mean(Weight), Shoe_size = mean(Shoe_size), Pair_Shoes = mean(Pair_Shoes))
+```
+
+What is the correlation between height and weight by gender
+```{r}
+data18 %>%
+  group_by(Gender) %>%
+  summarise(round(cor(Height, Weight), 2))
+```
+
+
+## Graphs
+
+Make the following graphs * One that show the relationship between height and weight by gender * Average shoe size by gender * Average show pair of shoes by gender
+
+```{r}
+data18 %>%
+  group_by(Gender) %>%
+  ggplot(aes(x = Weight, y = Height)) +
+  geom_point(aes(color = Gender), alpha = 0.5) +
+  facet_grid(. ~Gender)
+```
+
+```{r}
+data18 %>%
+  group_by(Gender) %>%
+  summarise(average_size = round(mean(Shoe_size), 0)) %>%
+  ggplot(mapping = aes(x = Gender, y = average_size, label = average_size)) +
+  geom_col(fill = "light green") +
+  geom_text(size = 8, fontface = 1, color = "red", position = position_stack(vjust = 0.5)) +
+  ylab("Shoe_Size") + xlab("Gender") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r}
+data18 %>%
+  group_by(Gender) %>%
+  summarise(average_pair = round(mean(Pair_Shoes), 0)) %>%
+  ggplot(mapping = aes(x = Gender, y = average_pair, label = average_pair)) +
+  geom_col(fill = "dark blue") +
+  geom_text(size = 8, fontface = 1, color = "yellow", position = position_stack(vjust = 0.5)) +
+  ylab("Pair_of_Shoes") + xlab("Gender") +
+  ggtitle("Average Pair of Shoes by Gender") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
