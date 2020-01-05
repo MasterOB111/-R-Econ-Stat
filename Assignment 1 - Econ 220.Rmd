@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1 Econ 220"
-author: "Dingyuan Zhang"
+author: "D.Z."
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_document
 ---
