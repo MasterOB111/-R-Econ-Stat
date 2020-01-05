@@ -1,0 +1,28 @@
+---
+title: "Assignment 2 Eco220"
+author: "D.Z."
+date: "2019/3/1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyr)
+```
+
+# Your turn 
+
+Let's work with a dataset from one of your classmates project in Fall 2018.  
+
+* Load the UN data into a new Rmarkdown document Assignment2
+* View this data
+* Which format is it? (long)
+* What will be the ideal format for you to analyse this data in your project (wide)
+* Change the format to that ideal format 
+* Show the structure of your dataset and head()
+
+```{r}
+UN_ExampleTidy <- read.csv("~/Documents/S19_Eco220L/UN_ExampleTidy.csv")
+UN_wide <- spread(UN_ExampleTidy, Subgroup, Value)
+head(UN_wide)
+```
