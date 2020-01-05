@@ -1,0 +1,104 @@
+---
+title: "Assignment 4 Eco220"
+author: "D.Z."
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(plotly)
+library(knitr)
+```
+
+# Birthweight data by gender 
+
+* Load the BirthdataNC into R and use kable to create a table with mean and sd by gender. 
+
+```{r echo=T, results='asis'}
+BirthdataNC <- read.csv("/Users/dingyuanzhang/Documents/S19_Eco220L/BirthdataNC.csv")
+
+statbygender<- BirthdataNC %>%
+  group_by(gender) %>%
+  summarise(avgweight=round(mean(weight),3),sdweight=round(sd(weight),3))
+
+statbygender
+```
+
+* Make an interactive histogram of weight by gender that alos contains density plots in it. 
+
+```{r echo=T}
+# Interactive histogram of the data with density function included
+plot <-BirthdataNC %>%
+  group_by(gender) %>%
+  ggplot(aes(x=weight,fill=gender)) +
+  geom_histogram(aes(y=..density..),breaks=seq(0, 12, by = 0.3)) +
+  geom_vline(xintercept = 7.3, linetype="dotted", color = "blue", size=1.5) +
+  geom_density(alpha=0.5)
+
+ggplotly(plot)
+
+# You could also add these two layers to plot normal distributios too, similar to what we did in class for the sampling dist. No need to that here, but this is how you do it. 
+
+# stat_function(fun = dnorm, args = list(mean = 6.9, sd = 1.47), col=2)+ stat_function(fun = dnorm, args = list(mean = 7.3, sd = 1.51), col=4)+ labs(title="Histogram for sample means")+ theme_classic()
+```
+
+
+#####Create quantiles:
+
+* Quartiles of weight for the whole population
+* Quartiles of weight by gender
+* deciles by gender
+* what is the weight of the 75% percentile male name the object p75m
+* what is the weight of the 45% percentile male name the object p45f
+
+
+```{r echo=T, results='hold'}
+# Create quartiles of the data
+quantile(BirthdataNC$weight)
+
+ 
+ # Create quartiles by gender. 
+ female<- BirthdataNC %>% filter(gender=='female') %>% select(weight)
+ male <- BirthdataNC %>% filter(gender=='male') %>% select(weight)
+ quantile(female$weight)
+ quantile(male$weight)
+ 
+ 
+# Create deciles of the data
+deciles<-seq(0,1, by=0.1) 
+
+# this creates a sequence from 0 to 1 by 0.1
+quantile(female$weight, deciles)
+quantile(male$weight, deciles) 
+  
+  
+ print("75% Percentiles for male and female")
+p75m<-quantile(male$weight, 0.75)
+p45f<-quantile(female$weight, 0.45)
+```
+
+
+**My study finds that weight for the 75% percentile in the male population is `r p75m` pounds.  For the female population de 45% weight is `r p45f` pounds**
+
+## Interactive boxplot of weight by gender. 
+
+What can you say about the distribution by looking at this graphs. 
+
+```{r echo=T}
+# Boxplot by gender, interactive 
+q<-BirthdataNC %>%
+  group_by(gender) %>%
+  ggplot(aes(y=gender)) +
+  geom_boxplot(aes(col=gender)) +
+  labs(title="Weight distribution by gender - Boxplot") +
+  theme_classic() +
+  coord_flip()
+
+ggplotly(q)
+ 
+plotly_plot <- plot_ly(BirthdataNC, x = ~weight, y = ~gender, type = "box")
+plotly_plot
+```
+
